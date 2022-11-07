@@ -24,6 +24,7 @@ function getRecipesFromStorage() {
   // A9. TODO - Complete the functionality as described in this function
   //           header. It is possible in only a single line, but should
   //           be no more than a few lines.
+  return JSON.parse(localStorage.getItem('recipes'));
 }
 
 /**
@@ -39,6 +40,13 @@ function addRecipesToDocument(recipes) {
   //            create a <recipe-card> element for each one, and populate
   //            each <recipe-card> with that recipe data using element.data = ...
   //            Append each element to <main>
+  const mainRef = document.querySelector('main');
+  recipes.forEach(recipe => {
+    const card = document.createElement('recipe-card');
+    card.data = recipe;
+    mainRef.appendChild(card);
+  });
+
 }
 
 /**
@@ -51,6 +59,7 @@ function saveRecipesToStorage(recipes) {
   // B1. TODO - Complete the functionality as described in this function
   //            header. It is possible in only a single line, but should
   //            be no more than a few lines.
+  localStorage.setItem('recipes', JSON.stringify(recipes));
 }
 
 /**
@@ -60,10 +69,29 @@ function saveRecipesToStorage(recipes) {
 function initFormHandler() {
 
   // B2. TODO - Get a reference to the <form> element
-  
+  const fromRef = document.querySelector('form');
   // B3. TODO - Add an event listener for the 'submit' event, which fires when the
   //            submit button is clicked
+  fromRef.addEventListener('submit', (event)=> {
+    let data = new FormData(event.target);
+    let recipeObject = Object.fromEntries(data.entries());
 
+    const mainRef = document.querySelector('main');
+    const card = document.createElement('recipe-card');
+    card.data = recipeObject;
+    mainRef.appendChild(card);
+
+    let recipes = getRecipesFromStorage();
+    recipes.push(recipeObject);
+    saveRecipesToStorage(recipes);
+  });
+
+  let clearRef = document.getElementsByClassName('danger');
+    clearRef[0].addEventListener('click',()=> {
+      localStorage.clear();
+      let mainRef = document.querySelector('main');
+      mainRef.innerHTML="";
+    });
   // Steps B4-B9 will occur inside the event listener from step B3
   // B4. TODO - Create a new FormData object from the <form> element reference above
   // B5. TODO - Create an empty object (I'll refer to this object as recipeObject to
